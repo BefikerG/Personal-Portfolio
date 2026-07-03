@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --color-concrete-50: #f8f8f8;
+  --color-concrete-100: #e8e8e8;
+  --color-concrete-200: #d1d1d1;
+  --color-concrete-300: #b0b0b0;
+  --color-concrete-400: #8a8a8a;
+  --color-concrete-500: #6d6d6d;
+  --color-concrete-600: #5a5a5a;
+  --color-concrete-700: #4a4a4a;
+  --color-concrete-800: #3a3a3a;
+  --color-concrete-900: #1a1a1a;
+  --color-concrete-950: #0d0d0d;
+  --color-industrial-amber: #f59e0b;
+  --color-industrial-green: #22c55e;
+  --color-industrial-accent: #84cc16;
+}
+
+* {
+  /* margin: 0;
+  padding: 0; */
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  background-color: var(--color-concrete-950);
+  color: var(--color-concrete-100);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+a, button, input, textarea {
+  cursor: none;
+}
+
+::selection {
+  background: var(--color-industrial-green);
+  color: var(--color-concrete-950);
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.15), transparent);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-concrete-950);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-concrete-700);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-industrial-green);
+}
