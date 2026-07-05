@@ -20,6 +20,7 @@ const INITIAL_DELAY = 60
 
 export function BreakroomGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const isDraggingRef = useRef(false)
   const [, setScore] = useState(0)
   const [highScore, setHighScore] = useState(() => {
     return parseInt(localStorage.getItem('breakroom_high') || '0')
@@ -111,8 +112,38 @@ export function BreakroomGame() {
     const onKeyDown = (e: KeyboardEvent) => handleKey(e, true)
     const onKeyUp = (e: KeyboardEvent) => handleKey(e, false)
 
+    const getTouchPosition = (clientX: number) => {
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = canvas.width / rect.width
+      return (clientX - rect.left) * scaleX
+    }
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return
+      const targetX = getTouchPosition(e.clientX) - g.player.w / 2
+      g.player.x = Math.max(0, Math.min(400 - g.player.w, targetX))
+    }
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return
+      isDraggingRef.current = true
+      canvas.setPointerCapture(e.pointerId)
+      handlePointerMove(e)
+    }
+
+    const handlePointerUp = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return
+      isDraggingRef.current = false
+      canvas.releasePointerCapture(e.pointerId)
+    }
+
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
+    canvas.addEventListener('pointerdown', handlePointerDown)
+    canvas.addEventListener('pointermove', handlePointerMove)
+    canvas.addEventListener('pointerup', handlePointerUp)
+    canvas.addEventListener('pointerleave', handlePointerUp)
+    canvas.addEventListener('pointercancel', handlePointerUp)
 
     let animId: number
 
@@ -246,6 +277,11 @@ export function BreakroomGame() {
       cancelAnimationFrame(animId)
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
+      canvas.removeEventListener('pointerdown', handlePointerDown)
+      canvas.removeEventListener('pointermove', handlePointerMove)
+      canvas.removeEventListener('pointerup', handlePointerUp)
+      canvas.removeEventListener('pointerleave', handlePointerUp)
+      canvas.removeEventListener('pointercancel', handlePointerUp)
     }
   }, [spawnObject, highScore])
 
